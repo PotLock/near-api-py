@@ -36,7 +36,8 @@ class Account(object):
 
     def _sign_and_submit_tx(self, receiver_id: str, actions: List['transactions.Action']) -> dict:
         self._access_key['nonce'] += 1
-        block_hash = self._provider.get_status()['sync_info']['latest_block_hash']
+        block = self._provider.get_block()
+        block_hash = block['header']['hash']
         block_hash = base58.b58decode(block_hash.encode('utf8'))
         serialized_tx = transactions.sign_and_serialize_transaction(
             receiver_id, self._access_key['nonce'], actions, block_hash, self._signer)
