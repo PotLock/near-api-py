@@ -92,6 +92,9 @@ class Account(object):
             [transactions.create_function_call_action(method_name, args, gas, amount)]
         )
 
+    def add_full_access_key(self, account_id: str, public_key: str):
+        return self._sign_and_submit_tx(account_id, [transactions.create_full_access_key_action(public_key)])
+
     def create_account(self, account_id: str, public_key: str, initial_balance: int) -> dict:
         actions = [
             transactions.create_create_account_action(),
