@@ -95,6 +95,9 @@ class Account(object):
     def add_full_access_key(self, account_id: str, public_key: bytes):
         return self._sign_and_submit_tx(account_id, [transactions.create_full_access_key_action(public_key)])
 
+    def delete_access_key(self, account_id: str, public_key: bytes):
+        return self._sign_and_submit_tx(account_id, [transactions.create_delete_access_key_action(public_key)])
+
     def create_account(self, account_id: str, public_key: bytes, initial_balance: int) -> dict:
         actions = [
             transactions.create_create_account_action(),
