@@ -92,10 +92,10 @@ class Account(object):
             [transactions.create_function_call_action(method_name, args, gas, amount)]
         )
 
-    def add_full_access_key(self, account_id: str, public_key: str):
+    def add_full_access_key(self, account_id: str, public_key: bytes):
         return self._sign_and_submit_tx(account_id, [transactions.create_full_access_key_action(public_key)])
 
-    def create_account(self, account_id: str, public_key: str, initial_balance: int) -> dict:
+    def create_account(self, account_id: str, public_key: bytes, initial_balance: int) -> dict:
         actions = [
             transactions.create_create_account_action(),
             transactions.create_full_access_key_action(public_key),
@@ -109,13 +109,13 @@ class Account(object):
     def deploy_contract(self, contract_code: bytes) -> dict:
         return self._sign_and_submit_tx(self._account_id, [transactions.create_deploy_contract_action(contract_code)])
 
-    def stake(self, public_key: str, amount: int) -> dict:
+    def stake(self, public_key: bytes, amount: int) -> dict:
         return self._sign_and_submit_tx(self._account_id, [transactions.create_staking_action(amount, public_key)])
 
     def create_and_deploy_contract(
             self,
             contract_id: str,
-            public_key: str,
+            public_key: bytes,
             contract_code: bytes,
             initial_balance: int
     ) -> dict:
@@ -129,7 +129,7 @@ class Account(object):
     def create_deploy_and_init_contract(
             self,
             contract_id: str,
-            public_key: str,
+            public_key: bytes,
             contract_code: bytes,
             initial_balance: int,
             args: bytes,
