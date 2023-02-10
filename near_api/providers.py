@@ -124,8 +124,12 @@ class JsonProvider(object):
                 'finality': finality
             }, timeout=timeout)
 
-    def get_block(self, block_id: str, timeout: 'TimeoutType' = 2.0) -> dict:
-        return self.json_rpc("block", [block_id], timeout=timeout)
+    def get_block(self, block_id = None, timeout: 'TimeoutType' = 2.0) -> dict:
+        params = {}
+        if block_id:
+            params['block_id'] = block_id
+        params['finality'] = "final"
+        return self.json_rpc("block", params, timeout=timeout)
 
     def get_chunk(self, chunk_id: str, timeout: 'TimeoutType' = 2.0) -> dict:
         return self.json_rpc("chunk", [chunk_id], timeout=timeout)
