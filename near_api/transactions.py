@@ -304,7 +304,7 @@ def create_delete_account_action(beneficiary_id: str) -> 'Action':
     return action
 
 
-def create_full_access_key_action(pk: str) -> 'Action':
+def create_full_access_key_action(pk: bytes) -> 'Action':
     permission = AccessKeyPermission()
     permission.enum = "fullAccess"
     permission.fullAccess = FullAccessPermission()
@@ -323,7 +323,7 @@ def create_full_access_key_action(pk: str) -> 'Action':
     return action
 
 
-def create_delete_access_key_action(pk: str) -> 'Action':
+def create_delete_access_key_action(pk: bytes) -> 'Action':
     public_key = PublicKey()
     public_key.keyType = 0
     public_key.data = pk
