@@ -42,8 +42,13 @@ class JsonProvider(object):
         r = requests.post(self.rpc_addr(), json=j, timeout=timeout, proxies=self.proxies)
         r.raise_for_status()
         content = json.loads(r.content)
+        error = None
         if "error" in content:
-            raise JsonProviderError(content['error'])
+            error = content["error"]
+        elif "result" in content and "error" in content["result"]:
+            error = content["result"]["error"]
+        if error:
+            raise JsonProviderError(error)
         return content['result']
 
     def send_tx(self, signed_tx: bytes, timeout: 'TimeoutType' = 2.0) -> dict:

@@ -8,11 +8,13 @@ class BinarySerializer:
 
     def serialize_num(self, value: int, n_bytes: int):
         orig_value = value
-        assert value >= 0, "Can't serialize negative numbers %d" % value    # TODO: Need to replace to Exception
+        if value < 0:
+            raise Exception("Can't serialize negative numbers %d" % value)
         for i in range(n_bytes):
             self.array.append(value & 255)
             value //= 256
-        assert value == 0, "Value %d has more than %d bytes" % (orig_value, n_bytes)    # TODO: Need to replace to Exception
+        if value != 0:
+            raise Exception("Value %d has more than %d bytes" % (orig_value, n_bytes))
 
     def serialize_field(self, value: Union[str, int], field_type: Union[str, list, dict, type]):
         try:
@@ -24,29 +26,34 @@ class BinarySerializer:
                     self.serialize_num(len(b), 4)
                     self.array += b
                 else:
-                    assert False, field_type        # TODO: Need to replace to Exception
+                    raise Exception(f"invalid str field_type: {field_type}")
             elif type(field_type) == list:
-                assert len(field_type) == 1    # TODO: Need to replace to Exception
+                if len(field_type) != 1:
+                    raise Exception("field_type list can only contain 1 element")
                 if type(field_type[0]) == int:
-                    assert type(value) == bytes, "type(%s) = %s != bytes" % (value, type(value))    # TODO: Need to replace to Exception
-                    assert len(value) == field_type[0], "len(%s) = %s != %s" % (value, len(value), field_type[0])    # TODO: Need to replace to Exception
+                    if type(value) != bytes:
+                        raise Exception("type(%s) = %s != bytes" % (value, type(value)))
+                    if len(value) != field_type[0]:
+                        raise Exception("len(%s) = %s != %s" % (value, len(value), field_type[0]))
                     self.array += bytearray(value)
                 else:
                     self.serialize_num(len(value), 4)
                     for el in value:
                         self.serialize_field(el, field_type[0])
             elif type(field_type) == dict:
-                assert field_type['kind'] == "option"    # TODO: Need to replace to Exception
+                if field_type['kind'] != "option":
+                    raise Exception(f"invalid dict filed_type kind: {field_type['kind']}")
                 if value is None:
                     self.serialize_num(0, 1)
                 else:
                     self.serialize_num(1, 1)
                     self.serialize_field(value, field_type['type'])
             elif type(field_type) == type:
-                assert type(value) == field_type, "%s != type(%s)" % (field_type, value)    # TODO: Need to replace to Exception
+                if type(value) != field_type:
+                    raise Exception("%s != type(%s)" % (field_type, value))
                 self.serialize_struct(value)
             else:
-                assert False, type(field_type)    # TODO: Need to replace to Exception
+                raise Exception(f"invalid field_type type: {type(field_type)}")
         except Exception:
             print("Failed to serialize %s as %s" % (value, field_type))
             raise
@@ -64,7 +71,7 @@ class BinarySerializer:
                     self.serialize_field(getattr(obj, fieldName), fieldType)
                     break
         else:
-            assert False, struct_schema     # TODO: Need to replace to Exception
+            raise Exception(f"invalid struct_scheme: {struct_schema}")
 
     def serialize(self, obj):
         self.serialize_struct(obj)
