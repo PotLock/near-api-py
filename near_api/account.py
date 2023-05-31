@@ -30,8 +30,11 @@ class Account(object):
         self._provider = provider
         self._signer = signer
         self._account_id = account_id or self._signer.account_id
-        self._account: dict = provider.get_account(self._account_id)
-        self._access_key: dict = provider.get_access_key(self._account_id, self._signer.key_pair.encoded_public_key())
+        try:
+            self._account: dict = provider.get_account(self._account_id)
+            self._access_key: dict = provider.get_access_key(self._account_id, self._signer.key_pair.encoded_public_key())
+        except Exception as e:
+            raise e
         # print(account_id, self._account, self._access_key)
 
     def _sign_and_submit_tx(self, receiver_id: str, actions: List['transactions.Action']) -> dict:

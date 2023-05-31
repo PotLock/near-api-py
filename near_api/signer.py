@@ -14,7 +14,7 @@ class KeyPair(object):
         the byte object returned as "secret_key" property of a KeyPair object."""
         if not secret_key:
             self._secret_key, self._public_key = ed25519.keys.create_keypair()
-            raise Exception("No secret_key")
+            raise Exception("No secret_key") # TODO: why raise an Exception when we have just created a keypair?
         if isinstance(secret_key, bytes):
             self._secret_key = ed25519.keys.SigningKey(secret_key)
         elif isinstance(secret_key, str):
