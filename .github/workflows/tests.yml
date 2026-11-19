@@ -2,6 +2,7 @@ name: CI
 on: push
 jobs:
   tests:
+    timeout-minutes: 60
     name: NAPy Tests
     runs-on: ubuntu-latest
     steps:
